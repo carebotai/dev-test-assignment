@@ -26,6 +26,8 @@ script should be:
 
 You can use any libraries you want. Use ChatGPT or any other LLM to assist you in any way you seem appropriate.
 
+Credentials for connecting to the Azure Blob Storage were provided to you by e-mail.
+
 
 ## Requirements
 - All functions in `src/aggregate_pdf_reports.py` are implemented and the script is runnable.
