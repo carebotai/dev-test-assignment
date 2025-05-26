@@ -43,6 +43,10 @@ Format the result as following:
 ```
 
 #### 2. How many scans were predicted as `ABNORMAL`, `SUSPECT`, and `NORMAL` for each AET.
+Beware that each scan have N predictions and severity of a scan is determined by the most severe prediction (and they 
+go in the following order by ascending priority: `NORMAL`, `SUSPECT` and `ABNORMAL`). And we want count and severity of 
+scans, not predictions themselves.
+
 Format the result as following: 
 ```
 +---------+---------+------+
