@@ -27,8 +27,8 @@ predictions (each pathology is predicted separately). Each prediction has a seve
 ## Task
 
 ### Database Querying and Filtering
-Connect to the given database (credentials were provided by e-mail), and write an SQL query to complete the following 
-tasks.
+Connect to the local database (running in Docker, see the [docker-compose file](../docker-compose.yml) for more 
+details), and write an SQL query to complete the following tasks.
 
 #### 1. Select the date of the first scan for each AET.
 We want to know when we started receiving scans from each AET (only the date, not the whole datetime column!). 

@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: dicom_db
+      POSTGRES_USER: db_admin
+      POSTGRES_PASSWORD: testpassword123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # This automatically runs the SQL script when the container is created
+      - ./init/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite@sha256:647c63a91102a9d8e8000aab803436e1fc85fbb285e7ce830a82ee5d6661cf37
+    ports:
+      - "10000:10000" # Blob storage
+    volumes:
+        - azurite_data:/data
+    restart: unless-stopped
+    command: azurite --skipApiVersionCheck --blobHost 0.0.0.0 --location /data
+
+  azurite-init:
+    image: python:3.10-slim
+    depends_on:
+      - azurite
+    volumes:
+      # Mount your local python script into the container
+      - ./init/seed_azurite.py:/app/seed_azurite.py
+      - ./init/requirements.txt:/app/requirements.txt
+      # Mount the azurite data volume so we can place a marker file
+      - azurite_data:/data
+    working_dir: /app
+    command: >
+      bash -c "
+      if [ -f /data/.seeded ]; then
+        echo 'Azurite is already seeded. Skipping.'
+      else
+        echo 'Waiting for Azurite to start up...'
+        sleep 5  # Give Azurite a few seconds to accept connections
+        pip install -r requirements.txt
+        python seed_azurite.py
+        touch /data/.seeded
+        echo 'Seeding complete! Marker file created.'
+      fi
+      "
+
+volumes:
+    postgres_data:
+    azurite_data:

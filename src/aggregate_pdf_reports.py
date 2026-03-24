@@ -1,20 +1,36 @@
-from datetime import datetime, timedelta
+from dataclasses import dataclass
+from datetime import datetime
 
 
-def get_pdf_file_names(from_: datetime, to: datetime) -> list[str]:
+@dataclass
+class PDFReportMetadata:
     """
-    This function should retrieve a list of PDF report file names (from our DB)
+    Metadata for a single DICOM PDF (Encapsulated PDF) report.
+    """
+    container_name: str
+    file_name: str
+
+
+def get_dicom_pdf_metadata(from_: datetime, to: datetime) -> list[PDFReportMetadata]:
+    """
+    This function should retrieve a list of DICOM PDF report metadata (from our DB)
     that were created between `from_` and `to`.
-    Metadata for each PDF report are stored in a `dicom_report` table, where
-    you will find also the filename column.
+
+    Metadata for each DICOM PDF report are stored in a `dicom_report` table.
     """
 
 
-def download_pdf_from_azure(pdf_file_name: str) -> bytes:
+def download_dicom_pdf_from_azure(pdf_report_metadata: PDFReportMetadata) -> bytes:
     """
-    This function should download a PDF report from the Azure Blob Storage stored
-    under the `pdf_file_name`. Use the `pdf-reports` container.
-    Return the downloaded PDF report as bytes.
+    This function should download a DICOM PDF report from the Azure Blob Storage.
+
+    Return the downloaded DICOM PDF report as bytes.
+    """
+
+
+def convert_dicom_pdf_to_normal_pdf(dicom_pdf: bytes) -> bytes:
+    """
+    This function should convert a DICOM PDF report to a normal PDF.
     """
 
 
@@ -35,14 +51,15 @@ def join_pdfs(pdf_paths: list[str]) -> None:
 
 
 if __name__ == '__main__':
-    pdf_file_names = get_pdf_file_names(
-        from_=datetime.now() - timedelta(days=14),
-        to=datetime.now(),
+    pdf_reports_metadata = get_dicom_pdf_metadata(
+        from_=...,
+        to=...,
     )
 
     pdf_paths = []
-    for pdf_file_name in pdf_file_names:
-        pdf = download_pdf_from_azure(pdf_file_name)
+    for pdf_report_metadata in pdf_reports_metadata:
+        dicom_pdf = download_dicom_pdf_from_azure(pdf_report_metadata)
+        pdf = convert_dicom_pdf_to_normal_pdf(dicom_pdf)
         pdf_path = store_pdf_on_disk(pdf)
         pdf_paths.append(pdf_path)
 
